@@ -105,13 +105,35 @@ class Board():
 
   def show(self):
     print()
-    for row in self.grid:
-      rowStr = ""
-      for cell in row:
-        if cell.isOccupied:
-          rowStr += "● "
-        else:
-          rowStr += "○ "
-      centeredStr = rowStr.center(self.size * 2) 
-      print(centeredStr)
+
+    if (self.shape == "triangle"):
+      for row in self.grid:
+        rowStr = ""
+        for cell in row:
+          if cell.isOccupied:
+            rowStr += "● "
+          else:
+            rowStr += "○ "
+        centeredStr = rowStr.center(self.size * 2) 
+        print(centeredStr)
+    else:
+      display_lines = []
+      for i in range(self.size):
+        for j in range(self.size):
+          try:
+            display_lines[i+j].append(self.get_cell((j, i)))
+          except:
+            display_lines.append([])
+            display_lines[i+j].append(self.get_cell((j, i)))
+
+      for line in display_lines:
+        rowStr = ""
+        for cell in line:
+          if cell.isOccupied:
+            rowStr += "● "
+          else:
+            rowStr += "○ "
+        centeredStr = rowStr.center(self.size * 2) 
+        print(centeredStr)
+
     print()

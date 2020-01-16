@@ -4,10 +4,10 @@
 shape = "diamond"
 
 # Size of the board: Integer larger than 1
-size = 3
+size = 4
 
 # Cells not containing pegs when initialized: (i, j) where i and j are coordinates (0-indexed)
-openCells = [(2, 2), (1, 1), (0, 0)]
+openCells = [(2, 2), (1, 1), (0, 0), (3, 2)]
 
 # Legal directions to move
 directions = {"UP": (0, -1), "UPRIGHT": (1, -1), "RIGHT": (1, 0), "DOWNRIGHT": (1, 1), "DOWN": (0, 1), "DOWNLEFT": (-1, 1), "LEFT": (-1, 0), "UPLEFT": (-1, -1)}
