@@ -1,11 +1,12 @@
 import config as params
 from board import Board
+from visualization import Visualizer
 
 class Game():
 
   def __init__(self):
     self.board = Board(params.shape, params.size, params.openCells)
-    # self.directions = params.directions
+    self.viz = Visualizer(self.board)
 
   def move_cell(self, pos, direction):
     cell_to_move = self.board.get_cell(pos)
@@ -34,6 +35,6 @@ class Game():
     return (board, status)
 
   def show(self):
-    self.board.show()
+    self.viz.show()
 
 
