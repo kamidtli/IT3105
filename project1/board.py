@@ -88,7 +88,6 @@ class Board():
           legal_moves.append(move)
     return legal_moves
 
-
   def get_state(self):
     # Creates a 2D grid representing the state of the board, where 0 indicates
     # an empty cell and 1 indicates an occupied cell
@@ -102,38 +101,3 @@ class Board():
           row.append(0)
       state.append(row)
     return state
-
-  def show(self):
-    print()
-
-    if (self.shape == "triangle"):
-      for row in self.grid:
-        rowStr = ""
-        for cell in row:
-          if cell.isOccupied:
-            rowStr += "● "
-          else:
-            rowStr += "○ "
-        centeredStr = rowStr.center(self.size * 2) 
-        print(centeredStr)
-    else:
-      display_lines = []
-      for i in range(self.size):
-        for j in range(self.size):
-          try:
-            display_lines[i+j].append(self.get_cell((j, i)))
-          except:
-            display_lines.append([])
-            display_lines[i+j].append(self.get_cell((j, i)))
-
-      for line in display_lines:
-        rowStr = ""
-        for cell in line:
-          if cell.isOccupied:
-            rowStr += "● "
-          else:
-            rowStr += "○ "
-        centeredStr = rowStr.center(self.size * 2) 
-        print(centeredStr)
-
-    print()
