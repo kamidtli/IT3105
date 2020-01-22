@@ -4,14 +4,17 @@ from visualization import Visualizer
 
 class Game():
 
-  def __init__(self):
+  def __init__(self, visualize=False):
+    self.visualize = visualize
     self.board = Board(params.shape, params.size, params.openCells)
-    self.viz = Visualizer(self.board)
+    if visualize:
+      self.viz = Visualizer(self.board)
 
   def move_cell(self, pos, direction):
     cell_to_move = self.board.get_cell(pos)
     cell_to_move.move(direction)
-    self.viz.add_game_state(self.board) # Update the visualization
+    if self.visualize:
+      self.viz.add_game_state(self.board) # Update the visualization
   
   def game_won(self):
     return self.board.get_remaining_pegs() == 1
@@ -36,6 +39,7 @@ class Game():
     return (board, status)
 
   def show(self):
-    self.viz.show()
+    if self.visualize:
+      self.viz.show()
 
 

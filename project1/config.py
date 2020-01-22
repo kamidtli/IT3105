@@ -14,3 +14,6 @@ directions = {"UP": (0, -1), "UPRIGHT": (1, -1), "RIGHT": (1, 0), "DOWNRIGHT": (
 
 # Visualization delay between frames, in ms 
 delay = 1000
+
+# Number of episodes
+num_of_episodes = 2

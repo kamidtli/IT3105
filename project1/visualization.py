@@ -45,9 +45,9 @@ class Visualizer():
     color_map = []
     for node in graph:
       if node.isOccupied:
-        color_map.append("green")
+        color_map.append("#e83023")
       else:
-        color_map.append("black")
+        color_map.append("#424242")
     return color_map
 
   def add_game_state(self, new_board):
@@ -58,7 +58,7 @@ class Visualizer():
   def draw_graph(self, G):
     color_map = G.graph["color_map"]
     layout = G.graph["layout"]
-    nx.draw(G, pos=layout, node_color=color_map, with_labels=False)
+    nx.draw(G, pos=layout, node_color=color_map, node_size=[1000], with_labels=False)
 
   def show(self):
 
