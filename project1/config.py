@@ -11,3 +11,6 @@ openCells = [(2, 2), (1, 1), (0, 0), (3, 2)]
 
 # Legal directions to move
 directions = {"UP": (0, -1), "UPRIGHT": (1, -1), "RIGHT": (1, 0), "DOWNRIGHT": (1, 1), "DOWN": (0, 1), "DOWNLEFT": (-1, 1), "LEFT": (-1, 0), "UPLEFT": (-1, -1)}
+
+# Visualization delay between frames, in ms 
+delay = 1000

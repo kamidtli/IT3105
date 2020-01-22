@@ -1,18 +1,20 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import config as params
 
 class Visualizer():
 
   def __init__(self, board):
-    self.nodes, self.layout, self.edges = self.unpack_board(board)
-    self.graph = self.create_graph()
-    self.color_map = self.create_color_map()
+    self.game_graphs = [] # List of all graphs corresponding to states in an episode 
+    self.add_game_state(board)
 
-  def create_graph(self):
+  def create_graph(self, nodes, edges, layout):
     G = nx.Graph()
-    G.add_nodes_from(self.nodes)
-    G.add_edges_from(self.edges)
+    G.add_nodes_from(nodes)
+    G.add_edges_from(edges)
+    G.graph["color_map"] = self.create_color_map(G)
+    G.graph["layout"] = layout
     return G
 
   def unpack_board(self, board):
@@ -39,36 +41,38 @@ class Visualizer():
       y = grid_width - (pos[0] + pos[1])
     return (x, y)
 
-  def create_color_map(self):
+  def create_color_map(self, graph):
     color_map = []
-    for node in self.graph:
+    for node in graph:
       if node.isOccupied:
         color_map.append("green")
       else:
         color_map.append("black")
     return color_map
 
-  def update_board(self):
-    self.graph = self.create_graph()
-    self.color_map = self.create_color_map()
+  def add_game_state(self, new_board):
+    nodes, layout, edges = self.unpack_board(new_board)
+    new_graph = self.create_graph(nodes, edges, layout)
+    self.game_graphs.append(new_graph)
 
-  def show_plot(self, timeout):
-
-    def close_event():
-      plt.close()
-
-    # Create a timer object with an interval of timeout (ms), then adding a callback function
-    fig = plt.figure()
-    timer = fig.canvas.new_timer(interval=timeout)
-    timer.add_callback(close_event)
-  
-    # Start the timer before plotting. The code continues while the timer is active
-    timer.start()
-    plt.show()
+  def draw_graph(self, G):
+    color_map = G.graph["color_map"]
+    layout = G.graph["layout"]
+    nx.draw(G, pos=layout, node_color=color_map, with_labels=False)
 
   def show(self):
-    self.update_board()
-    plt.subplot(111)
-    nx.draw(self.graph, pos=self.layout, node_color=self.color_map, with_labels=False)
-    # self.show_plot(2000)
+
+    fig = plt.figure()
+
+    def animate(i):
+      graph = self.game_graphs[i]
+      self.draw_graph(graph)
+
+    # Init only required for blitting to give a clean slate.
+    def init():
+      plt.subplot(111)
+      self.draw_graph(self.game_graphs[0])
+      
+    ani = animation.FuncAnimation(fig, animate, range(1, len(self.game_graphs)), init_func=init, interval=params.delay, blit=False, repeat=False)
+
     plt.show()

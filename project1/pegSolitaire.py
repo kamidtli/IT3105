@@ -11,6 +11,7 @@ class Game():
   def move_cell(self, pos, direction):
     cell_to_move = self.board.get_cell(pos)
     cell_to_move.move(direction)
+    self.viz.add_game_state(self.board) # Update the visualization
   
   def game_won(self):
     return self.board.get_remaining_pegs() == 1
