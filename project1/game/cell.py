@@ -1,4 +1,4 @@
-import config as params
+import game.game_config as params
 
 class Cell():
 

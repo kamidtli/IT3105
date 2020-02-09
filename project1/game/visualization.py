@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import config as params
+import game.game_config as params
 
 class Visualizer():
 
@@ -37,7 +37,7 @@ class Visualizer():
       x = grid_width/2 - pos[0] + 2 * pos[1]
       y = grid_width/2 - pos[0]
     else:
-      x = grid_width/2 - pos[0] + pos[1] - 2
+      x = grid_width/2 - pos[0] + pos[1]
       y = grid_width - (pos[0] + pos[1])
     return (x, y)
 

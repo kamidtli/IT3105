@@ -1,6 +1,6 @@
-import config as params
-from board import Board
-from visualization import Visualizer
+import game.game_config as params
+from game.board import Board
+from game.visualization import Visualizer
 
 class Game():
 
@@ -15,6 +15,8 @@ class Game():
     cell_to_move.move(direction)
     if self.visualize:
       self.viz.add_game_state(self.board) # Update the visualization
+
+    return self.get_state()
   
   def game_won(self):
     return self.board.get_remaining_pegs() == 1
@@ -35,8 +37,9 @@ class Game():
 
   def get_state(self):
     board = self.board.get_state()
+    legal_moves = self.get_legal_moves()
     status = self.get_status()
-    return (board, status)
+    return (board, legal_moves, status)
 
   def show(self):
     if self.visualize:
