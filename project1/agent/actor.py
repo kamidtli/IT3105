@@ -12,8 +12,8 @@ class Actor():
     # TODO: Reset eligibilites
     print("Reset eligibilities in actor")
 
-  def choose_action(self, state):
-    action = self.get_optimal_action(state=state[0], actions=state[1])
+  def choose_action(self, state, legal_actions):
+    action = self.get_optimal_action(state, legal_actions)
     return action
 
   def get_optimal_action(self, state, actions):

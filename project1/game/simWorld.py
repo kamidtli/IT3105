@@ -5,7 +5,7 @@ from game.game_config import *
 class Environment():
 
   def __init__(self):
-    self.game = Game(visualize=False)
+    self.game = Game()
 
   def get_current_state(self):
     return self.game.get_state()
@@ -24,6 +24,15 @@ class Environment():
 
       game.show()
 
+  def move(self, move):
+    pos = (move[0], move[1]) # Get the pos of the cell to move
+    direction = (move[2], move[3]) # Get the direction to move
+    self.game.move_cell(pos, direction) # Move the peg
+
+    return self.get_current_state()
+
+  def show(self):
+    self.game.show()
 
 # for i in range(num_of_episodes):
 #   game = Game(visualize=(i==0))

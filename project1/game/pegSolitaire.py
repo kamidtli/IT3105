@@ -4,7 +4,7 @@ from game.visualization import Visualizer
 
 class Game():
 
-  def __init__(self, visualize=False):
+  def __init__(self, visualize=True):
     self.visualize = visualize
     self.board = Board(params.shape, params.size, params.openCells)
     if visualize:
@@ -39,7 +39,13 @@ class Game():
     board = self.board.get_state()
     legal_moves = self.get_legal_moves()
     status = self.get_status()
-    return (board, legal_moves, status)
+    if self.is_finished() and not self.game_won():
+      reward = -10
+    elif self.game_won():
+      reward = 10
+    else:
+      reward = 0
+    return (board, legal_moves, reward, status)
 
   def show(self):
     if self.visualize:
