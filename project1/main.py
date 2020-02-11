@@ -18,25 +18,41 @@ for i in range(num_of_episodes):
   actor.reset_eligibilities()
 
   state, legal_moves, reward, done = env.get_current_state()
-  print("State: {}, legal moves: {}, reward: {}, isDone: {}".format(state, legal_moves, reward, done))
+  # print("State: {}, legal moves: {}, reward: {}, isDone: {}".format(state, legal_moves, reward, done))
 
+  critic.add_state(state)
   action = actor.choose_action(state, legal_moves)
-  print("Initial action:", action)
 
   step = 0
-  while done == 0: # Breaks when we get to a terminal state (done = 1 or -1)
+  while True:
     step += 1
-    state, legal_moves, reward, done = env.move(action)
-    print("State: {}, legal moves: {}, reward: {}, isDone: {}".format(state, legal_moves, reward, done))
-    print("Chosen action:", action)
+    new_state, legal_moves, reward, done = env.move(action)
+    critic.add_state(new_state)
 
+    # Check if game is over
     if done != 0 or step > step_threshold:
       if i == num_of_episodes-1: # Visualize the last episode
         env.show()
       break
 
-    action = actor.choose_action(state, legal_moves)
+    new_action = actor.choose_action(new_state, legal_moves)
+    actor.update_eligibility(state, action, 1)
 
+    critic.update_delta(reward, new_state, state)
+    critic.update_eligibility(state, 1)
+
+    saps = [(state, action), (new_state, new_action)] # All state-action pairs for this step
+    for sap in saps:
+      s, a = sap
+      critic.update_eval(s)
+      critic.update_eligibility(s)
+      actor.update_policy(s, a, critic.delta)
+      actor.update_eligibility(s, a)
+
+    action = new_action
+    state = new_state
+
+    print("Critic delta:", critic.delta)
 
   # To separate episodes in the terminal
   print()

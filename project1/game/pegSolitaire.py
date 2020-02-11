@@ -44,7 +44,7 @@ class Game():
     elif self.game_won():
       reward = 10
     else:
-      reward = 0
+      reward = -1
     return (board, legal_moves, reward, status)
 
   def show(self):
