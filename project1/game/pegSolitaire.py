@@ -44,8 +44,11 @@ class Game():
     elif self.game_won():
       reward = 10
     else:
-      reward = -1
+      reward = 0
     return (board, legal_moves, reward, status)
+
+  def get_remaining_pegs(self):
+    return self.board.get_remaining_pegs()
 
   def show(self):
     if self.visualize:

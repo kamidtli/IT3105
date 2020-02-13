@@ -10,7 +10,13 @@ discount = 0.9
 critic_learning_rate = 0.1
 
 # Actor learning rate (Alpha_a)
-actor_learning_rate = 0.1
+actor_learning_rate = 0.9
 
 # trace decay (Lambda)
 trace_decay = 0.1
+
+# Epsilon greedy value
+epsilon = 0.9
+
+# Decay value for the epsilon value
+epsilon_decay = 0.9

@@ -32,12 +32,14 @@ class Critic():
   def update_delta(self, reward, new_state, old_state):
     new_state = self.flatten_state(new_state)
     old_state = self.flatten_state(old_state)
+    # print("Updating delta: reward:{}".format(reward))
     self.delta = reward + discount*self.evaluate(new_state) - self.evaluate(old_state)
 
   def update_eval(self, state):
     state = self.flatten_state(state)
     current_eval = self.value_func[state]
     eligibility = self.eligibilities[state]
+    # print("Updating eval: elig:{}, current:{}".format(eligibility, current_eval))
     self.value_func[state] = current_eval + critic_learning_rate*self.delta*eligibility
 
   def add_state(self, state):

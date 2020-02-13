@@ -20,5 +20,8 @@ class Environment():
 
     return self.get_current_state() # Return the new state, with reward
 
+  def get_remaining_pegs(self):
+    return self.game.get_remaining_pegs()
+
   def show(self):
     self.game.show()

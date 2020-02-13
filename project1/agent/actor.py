@@ -7,17 +7,19 @@ class Actor():
   def __init__(self):
     self.policy = {}
     self.eligibilities = {}
-    print("Initialized the actor.")
 
   def reset_eligibilities(self):
     for key in self.eligibilities.keys():
       self.eligibilities[key] = 0
 
-  def choose_action(self, state, legal_actions):
+  def choose_action(self, state, legal_actions, epsilon):
+    if (len(legal_actions) == 0):
+      return (0, 0, 0, 0) # No action
+
     state = self.flatten_state(state)
     self.add_state_action_pairs_to_policy(state, legal_actions)
     self.add_state_action_pairs_to_eligibilities(state, legal_actions)
-    action = self.get_optimal_action(state, legal_actions)
+    action = self.get_optimal_action(state, legal_actions, epsilon)
     # print("Policy for state {}: {}".format(state, self.policy))
     # print("Action", action)
     return action
@@ -36,7 +38,10 @@ class Actor():
       if (state, action) not in self.eligibilities:
         self.eligibilities[(state, action)] = 0
 
-  def get_optimal_action(self, state, actions):
+  def get_optimal_action(self, state, actions, epsilon=0):
+    if (random.uniform(0, 1) < epsilon):
+      return random.choice(actions)
+
     max_value = -1
     best_actions = []
     for action in actions:
@@ -66,3 +71,5 @@ class Actor():
     if sap in self.policy:
       current_policy = self.policy[sap]
       self.policy[sap] = current_policy + actor_learning_rate*delta*self.eligibilities[sap]
+      # if (self.eligibilities[sap] > 0):
+      #   print("Updated policy with \n Current policy: {} + {}".format(current_policy, actor_learning_rate*delta*self.eligibilities[sap]))
