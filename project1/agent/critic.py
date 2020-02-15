@@ -1,31 +1,29 @@
 from agent.agent_config import *
+from agent.neural_net import init_nn
+from game.game_config import size
 
 # The critic maps each state to values, either by using a table or a neural network
 class Critic():
 
   def __init__(self):
     if critic_type == "neural_net":
-      self.value_func = self.init_nn()
+      self.value_func = init_nn(size)
     else:
       self.value_func = {}
     
     self.eligibilities = {}
     self.delta = 0 # The Temporal Differencing error
 
-  def init_nn(self):
-    # TODO: Initialize neural net table
-    return None
-  
   def reset_eligibilities(self):
     for key in self.eligibilities.keys():
       self.eligibilities[key] = 0
 
   def evaluate(self, state):
-    if critic_type == "table":
-      return self.value_func[state]
+    if critic_type == "neural_net":
+      # predict returns a 2D array, so we get the prediction value by using [0][0]
+      return self.value_func.predict(state)[0][0]
     else:
-      # TODO: Evaluate state with neural net
-      return None
+      return self.value_func[state]
 
   def update_delta(self, reward, new_state, old_state):
     new_state = self.flatten_state(new_state)

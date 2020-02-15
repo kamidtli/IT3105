@@ -25,7 +25,9 @@ for episode in range(num_of_episodes):
 
   state, legal_moves, reward, done = env.get_current_state()
 
-  critic.add_state(state)
+  if critic_type == "table":
+    critic.add_state(state)
+    
   action = actor.choose_action(state, legal_moves, epsilon)
 
   saps = [(state, action)] # All state-action pairs for this episode
@@ -34,7 +36,9 @@ for episode in range(num_of_episodes):
   while done == 0: # If done is -1 the game is lost, if done is 1 the game is won
     step += 1
     new_state, legal_moves, reward, done = env.move(action)
-    critic.add_state(new_state)
+
+    if critic_type == "table":
+      critic.add_state(new_state)
 
     new_action = actor.choose_action(new_state, legal_moves, epsilon)
 
