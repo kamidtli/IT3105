@@ -20,8 +20,6 @@ class Actor():
     self.add_state_action_pairs_to_policy(state, legal_actions)
     self.add_state_action_pairs_to_eligibilities(state, legal_actions)
     action = self.get_optimal_action(state, legal_actions, epsilon)
-    # print("Policy for state {}: {}".format(state, self.policy))
-    # print("Action", action)
     return action
 
   def flatten_state(self, state):
@@ -39,10 +37,13 @@ class Actor():
         self.eligibilities[(state, action)] = 0
 
   def get_optimal_action(self, state, actions, epsilon=0):
+
+    # print("Epsilon:", epsilon)
+
     if (random.uniform(0, 1) < epsilon):
       return random.choice(actions)
 
-    max_value = -1
+    max_value = float('-inf')
     best_actions = []
     for action in actions:
       value = self.policy[(state, action)]
@@ -53,6 +54,11 @@ class Actor():
       elif value == max_value:
         # Append action to best_actions since it's equally good
         best_actions.append(action)
+    
+    if len(best_actions) == 0:
+      print("Did not find optimal action. Returned a random one")
+      return random.choice(actions)
+
     return random.choice(best_actions)
 
   def update_eligibility(self, state, action, new_eligibility=None):
@@ -68,8 +74,5 @@ class Actor():
   def update_policy(self, state, action, delta):
     state = self.flatten_state(state)
     sap = (state, action)
-    if sap in self.policy:
-      current_policy = self.policy[sap]
-      self.policy[sap] = current_policy + actor_learning_rate*delta*self.eligibilities[sap]
-      # if (self.eligibilities[sap] > 0):
-      #   print("Updated policy with \n Current policy: {} + {}".format(current_policy, actor_learning_rate*delta*self.eligibilities[sap]))
+    current_policy = self.policy[sap]
+    self.policy[sap] = current_policy + actor_learning_rate*delta*self.eligibilities[sap]

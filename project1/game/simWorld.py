@@ -4,8 +4,8 @@ from game.game_config import *
 
 class Environment():
 
-  def __init__(self):
-    self.game = Game()
+  def __init__(self, viz=False):
+    self.game = Game(visualize=viz)
 
   def get_current_state(self):
     return self.game.get_state()

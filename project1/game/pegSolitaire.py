@@ -4,7 +4,7 @@ from game.visualization import Visualizer
 
 class Game():
 
-  def __init__(self, visualize=True):
+  def __init__(self, visualize=False):
     self.visualize = visualize
     self.board = Board(params.shape, params.size, params.openCells)
     if visualize:
@@ -40,11 +40,11 @@ class Game():
     legal_moves = self.get_legal_moves()
     status = self.get_status()
     if self.is_finished() and not self.game_won():
-      reward = -10
+      reward = params.lose
     elif self.game_won():
-      reward = 10
+      reward = params.win
     else:
-      reward = 0
+      reward = params.default
     return (board, legal_moves, reward, status)
 
   def get_remaining_pegs(self):

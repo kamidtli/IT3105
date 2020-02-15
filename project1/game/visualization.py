@@ -1,5 +1,5 @@
 import networkx as nx
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
 import matplotlib.animation as animation
 import game.game_config as params
 

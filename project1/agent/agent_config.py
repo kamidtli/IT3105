@@ -7,7 +7,7 @@ critic_type = "table"
 discount = 0.9
 
 # Critic learning rate (Alpha_c)
-critic_learning_rate = 0.1
+critic_learning_rate = 0.9
 
 # Actor learning rate (Alpha_a)
 actor_learning_rate = 0.9
@@ -16,7 +16,4 @@ actor_learning_rate = 0.9
 trace_decay = 0.1
 
 # Epsilon greedy value
-epsilon = 0.9
-
-# Decay value for the epsilon value
-epsilon_decay = 0.9
+epsilon_greedy_value = 0.9
