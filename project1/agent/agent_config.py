@@ -17,3 +17,8 @@ trace_decay = 0.1
 
 # Epsilon greedy value
 epsilon_greedy_value = 0.9
+
+# Neural net layer sizes (only for hidden layers
+# since the input layer is bounded by the board size,
+# and the output layer is always 1).
+hidden_layer_sizes = [16, 8]

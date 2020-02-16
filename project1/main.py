@@ -9,7 +9,7 @@ from main_plots import plot_remaining_pegs
 critic = Critic()
 actor = Actor()
 
-# Keep track of pegs left on board for each episode
+# Keep track of pegs left on board for each episode (for plotting)
 remaining_pegs = []
 
 # Local variable for the epsilon greedy strategy
@@ -30,7 +30,7 @@ for episode in range(num_of_episodes):
     
   action = actor.choose_action(state, legal_moves, epsilon)
 
-  saps = [(state, action)] # All state-action pairs for this episode
+  saps = [(state, action, reward)] # All state-action pairs for this episode
 
   step = 0
   while done == 0: # If done is -1 the game is lost, if done is 1 the game is won
@@ -49,13 +49,15 @@ for episode in range(num_of_episodes):
 
 
     if len(legal_moves) > 0: # The new state is not terminal, so we add it to saps
-      saps.append((new_state, new_action))
+      saps.append((new_state, new_action, reward))
 
     for sap in saps:
-      s, a = sap
+      s, a, r = sap # No need for reward r, but need to unpack it
       if critic_type == "table":
         critic.update_eval(s)
         critic.update_eligibility(s)
+      else:
+        critic.nn_update_eval(saps)
       actor.update_policy(s, a, critic.delta)
       actor.update_eligibility(s, a)
 
@@ -73,3 +75,6 @@ for episode in range(num_of_episodes):
     env.show()
 
 plot_remaining_pegs(remaining_pegs)
+
+if critic_type == "neural_net":
+  critic.value_func.summary()

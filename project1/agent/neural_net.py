@@ -4,10 +4,10 @@ from tensorflow import keras
 import numpy as np
 
 from game.game_config import shape, size
+from agent.agent_config import hidden_layer_sizes
+from agent.splitGD import SplitGD
 
 def init_nn(size):
-
-  print("\n\n##### Creating neural net #####\n")
 
   if shape == "triangle":
     input_shape = (size * (size+1)) / 2
@@ -15,11 +15,17 @@ def init_nn(size):
     input_shape = size**2
 
   # Create the network
-  model = keras.Sequential([
-    keras.layers.Dense(input_shape, input_shape=(input_shape, )),
-    keras.layers.Dense(input_shape / 2, activation='relu'),
-    keras.layers.Dense(1)
-  ])
+  model = keras.Sequential()
+
+  # Add the first layer
+  model.add(keras.layers.Dense(input_shape, input_shape=(input_shape, )))
+
+  # Add hidden layers
+  for layer_size in hidden_layer_sizes:
+    model.add(keras.layers.Dense(layer_size, activation='relu'))
+  
+  # Add output layer
+  model.add(keras.layers.Dense(1))
 
   # Compile the model
   model.compile(
@@ -28,10 +34,9 @@ def init_nn(size):
     metrics=['accuracy']
   )
 
-  input_layer = model.layers[0]
-  print("Created neural net with input size", input_layer.input_shape)
+  wrapped_model = SplitGD(model)  
 
-  return model
+  return wrapped_model
 
 
 if (__name__=="__main__"):

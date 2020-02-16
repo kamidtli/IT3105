@@ -22,9 +22,7 @@ class Critic():
 
   def evaluate(self, state):
     if critic_type == "neural_net":
-      state = np.asarray([state])
-      # predict returns a 2D array, so we get the prediction value by using [0][0]
-      return self.value_func.predict(state)[0][0]
+      return self.value_func.evaluate(state)
     else:
       return self.value_func[state]
 
@@ -66,6 +64,19 @@ class Critic():
     eligibility = self.eligibilities[state]
     self.value_func[state] = current_eval + critic_learning_rate*self.delta*eligibility
   
-  def nn_update_eval(self, state):
-    # TODO: Update neural net evaluation
-    return None
+  def nn_update_eval(self, state_action_reward_pairs):
+    states = []
+    targets = []
+    for i in range(len(state_action_reward_pairs)):
+      state, action, reward = state_action_reward_pairs[i]
+
+      if i == len(state_action_reward_pairs)-1: # On the last state, i.e. there is no successor state
+        targets.append(0)
+        states.append(self.flatten_state(state))
+      else:
+        next_state = state_action_reward_pairs[i+1][0]
+        target_val = reward + discount*self.evaluate(self.flatten_state(next_state))
+        targets.append(target_val)
+        states.append(self.flatten_state(state))
+
+    self.value_func.fit(states, targets, verbose=False)
