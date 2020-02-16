@@ -3,14 +3,21 @@ from tensorflow import keras
 
 import numpy as np
 
+from game.game_config import shape, size
+
 def init_nn(size):
 
   print("\n\n##### Creating neural net #####\n")
 
+  if shape == "triangle":
+    input_shape = (size * (size+1)) / 2
+  else:
+    input_shape = size**2
+
   # Create the network
   model = keras.Sequential([
-    keras.layers.Dense(size**2, input_shape=((size**2)-1, )),
-    keras.layers.Dense((size**2) / 2, activation='relu'),
+    keras.layers.Dense(input_shape, input_shape=(input_shape, )),
+    keras.layers.Dense(input_shape / 2, activation='relu'),
     keras.layers.Dense(1)
   ])
 

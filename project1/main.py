@@ -53,8 +53,9 @@ for episode in range(num_of_episodes):
 
     for sap in saps:
       s, a = sap
-      critic.update_eval(s)
-      critic.update_eligibility(s)
+      if critic_type == "table":
+        critic.update_eval(s)
+        critic.update_eligibility(s)
       actor.update_policy(s, a, critic.delta)
       actor.update_eligibility(s, a)
 

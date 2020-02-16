@@ -2,6 +2,8 @@ from agent.agent_config import *
 from agent.neural_net import init_nn
 from game.game_config import size
 
+import numpy as np
+
 # The critic maps each state to values, either by using a table or a neural network
 class Critic():
 
@@ -20,6 +22,7 @@ class Critic():
 
   def evaluate(self, state):
     if critic_type == "neural_net":
+      state = np.asarray([state])
       # predict returns a 2D array, so we get the prediction value by using [0][0]
       return self.value_func.predict(state)[0][0]
     else:
@@ -31,10 +34,10 @@ class Critic():
     self.delta = reward + discount*self.evaluate(new_state) - self.evaluate(old_state)
 
   def update_eval(self, state):
-    state = self.flatten_state(state)
-    current_eval = self.value_func[state]
-    eligibility = self.eligibilities[state]
-    self.value_func[state] = current_eval + critic_learning_rate*self.delta*eligibility
+    if critic_type == "neural_net":
+      self.nn_update_eval(state)
+    else:
+      self.table_update_eval(state)
 
   def add_state(self, state):
     state = self.flatten_state(state)
@@ -56,3 +59,13 @@ class Critic():
   def flatten_state(self, state):
     flat_state = [cell for row in state for cell in row] # Flatten the 2D state list
     return tuple(flat_state) # Make state a tuple so it is hashable
+
+  def table_update_eval(self, state):
+    state = self.flatten_state(state)
+    current_eval = self.value_func[state]
+    eligibility = self.eligibilities[state]
+    self.value_func[state] = current_eval + critic_learning_rate*self.delta*eligibility
+  
+  def nn_update_eval(self, state):
+    # TODO: Update neural net evaluation
+    return None
