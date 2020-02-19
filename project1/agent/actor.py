@@ -57,6 +57,9 @@ class Actor():
     
     if len(best_actions) == 0:
       print("Did not find optimal action. Returned a random one")
+      saps = ["{} -> {}".format((state, action), self.policy[(state, action)]) for action in actions]
+      print(saps)
+      print(float('-inf'))
       return random.choice(actions)
 
     return random.choice(best_actions)
@@ -65,14 +68,16 @@ class Actor():
     state = self.flatten_state(state)
     sap = (state, action)
 
-    if new_eligibility == None:
-      new_eligibility = discount*trace_decay*self.eligibilities[sap]
-    
     if sap in self.eligibilities:
-      self.eligibilities[sap] = new_eligibility
+      if new_eligibility == None:
+        new_eligibility = discount*trace_decay*self.eligibilities[sap]
+      
+      if sap in self.eligibilities:
+        self.eligibilities[sap] = new_eligibility
 
   def update_policy(self, state, action, delta):
     state = self.flatten_state(state)
     sap = (state, action)
-    current_policy = self.policy[sap]
-    self.policy[sap] = current_policy + actor_learning_rate*delta*self.eligibilities[sap]
+    if sap in self.policy:
+      current_policy = self.policy[sap]
+      self.policy[sap] = current_policy + actor_learning_rate*delta*self.eligibilities[sap]

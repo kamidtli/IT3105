@@ -1,6 +1,5 @@
 from agent.agent_config import *
 from agent.neural_net import init_nn
-from game.game_config import size
 
 import numpy as np
 
@@ -9,7 +8,7 @@ class Critic():
 
   def __init__(self):
     if critic_type == "neural_net":
-      self.value_func = init_nn(size)
+      self.value_func = init_nn()
     else:
       self.value_func = {}
     
@@ -17,8 +16,11 @@ class Critic():
     self.delta = 0 # The Temporal Differencing error
 
   def reset_eligibilities(self):
-    for key in self.eligibilities.keys():
-      self.eligibilities[key] = 0
+    if critic_type == "table":
+      for key in self.eligibilities.keys():
+        self.eligibilities[key] = 0
+    else:
+      self.value_func.reset_eligibilities()
 
   def evaluate(self, state):
     if critic_type == "neural_net":
@@ -64,19 +66,78 @@ class Critic():
     eligibility = self.eligibilities[state]
     self.value_func[state] = current_eval + critic_learning_rate*self.delta*eligibility
   
-  def nn_update_eval(self, state_action_reward_pairs):
-    states = []
+  # def nn_update_eval(self, state_action_reward_pairs):
+  #   states = []
+  #   targets = []
+
+  #   # for i in range(len(state_action_reward_pairs)):
+  #   #   state, action, reward = state_action_reward_pairs[i]
+
+  #   #   if i == len(state_action_reward_pairs)-1: # On the last state, i.e. there is no successor state
+  #   #     targets.append(2)
+  #   #     states.append(self.flatten_state(state))
+  #   #   else:
+  #   #     next_state = state_action_reward_pairs[i+1][0]
+  #   #     target_val = reward + discount*self.evaluate(self.flatten_state(next_state))
+  #   #     targets.append(target_val)
+  #   #     states.append(self.flatten_state(state))
+
+  #   non_evaluated_states = []
+
+  #   for i in range(len(state_action_reward_pairs)):
+  #     state, action, reward = state_action_reward_pairs[i]
+
+  #     if i < len(state_action_reward_pairs)-1: # Not on the last state, i.e. there is a successor state
+  #       next_state = state_action_reward_pairs[i+1][0]
+  #       non_evaluated_states.append(self.flatten_state(next_state))
+
+  #     states.append(self.flatten_state(state))
+
+  #   evaluations = self.evaluate(non_evaluated_states)
+
+  #   for i in range(len(evaluations)):
+  #     target_val = reward + discount*evaluations[i]
+  #     targets.append(target_val)
+
+  #   # Add a target value for the terminal state, since
+  #   # it has no successor 
+  #   targets.append(1)
+
+  #   # for i in range(len(states)):
+  #   #   print("{} -> {}".format(states[i], targets[i]))
+
+  #   for i in range(len(states)):
+  #     td_error = self.value_func.fit([states[i]], [targets[i]], verbose=False)
+
+  def nn_update_eval(self, states):
+    features = []
     targets = []
-    for i in range(len(state_action_reward_pairs)):
-      state, action, reward = state_action_reward_pairs[i]
+    non_evaluated_states = []
 
-      if i == len(state_action_reward_pairs)-1: # On the last state, i.e. there is no successor state
-        targets.append(0)
-        states.append(self.flatten_state(state))
-      else:
-        next_state = state_action_reward_pairs[i+1][0]
-        target_val = reward + discount*self.evaluate(self.flatten_state(next_state))
-        targets.append(target_val)
-        states.append(self.flatten_state(state))
+    # Loop over state, action reward tuples
+    for i in range(len(states)):
+      state, action, reward = states[i]
 
-    self.value_func.fit(states, targets, verbose=False)
+      if i < len(states)-1: # Not on the last state, i.e. there is a successor state
+        next_state = states[i+1][0]
+        non_evaluated_states.append(self.flatten_state(next_state))
+
+      features.append(self.flatten_state(state))
+
+    evaluations = self.evaluate(non_evaluated_states)
+
+    for evaluation in evaluations:
+      target_val = reward + discount*evaluation[0]
+      targets.append(target_val)
+
+    # Add a target value for the terminal state, since
+    # it has no successor
+    targets.append(1)
+
+    # print("Targets:", targets)
+    # print("Features:", features)
+    td_errors = self.value_func.fit(features, targets, verbose=False)
+
+    return td_errors
+
+    # return 0

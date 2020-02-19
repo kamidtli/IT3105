@@ -12,6 +12,8 @@ actor = Actor()
 # Keep track of pegs left on board for each episode (for plotting)
 remaining_pegs = []
 
+epsilons = []
+
 # Local variable for the epsilon greedy strategy
 epsilon = epsilon_greedy_value
 
@@ -44,37 +46,59 @@ for episode in range(num_of_episodes):
 
     actor.update_eligibility(state, action, 1)
 
-    critic.update_delta(reward, new_state, state)
-    critic.update_eligibility(state, 1)
+
+    if critic_type == "table":
+      critic.update_delta(reward, new_state, state)
+      critic.update_eligibility(state, 1)
 
 
-    if len(legal_moves) > 0: # The new state is not terminal, so we add it to saps
-      saps.append((new_state, new_action, reward))
+    # if len(legal_moves) > 0: # The new state is not terminal, so we add it to saps
+    saps.append((new_state, new_action, reward))
 
-    for sap in saps:
-      s, a, r = sap # No need for reward r, but need to unpack it
-      if critic_type == "table":
+    if critic_type == "table":
+      for sap in saps:
+        s, a, r = sap # No need for reward r, but need to unpack it
         critic.update_eval(s)
         critic.update_eligibility(s)
-      else:
-        critic.nn_update_eval(saps)
-      actor.update_policy(s, a, critic.delta)
-      actor.update_eligibility(s, a)
+        actor.update_policy(s, a, critic.delta)
+        actor.update_eligibility(s, a)
+    else:
+      # Evaluate the second to last state, need the successor state as well
+      td_errors = critic.nn_update_eval(saps)
+      for i in range(len(saps)-1):
+        s, a, r = saps[i]
+        # if i == len(saps)-1:
+        #   if reward > 0:
+        #     actor.update_policy(s, a, 10)
+        #   else:
+        #     actor.update_policy(s, a, 0)
+        # else:
+        #   actor.update_policy(s, a, td_errors[i])
+        actor.update_policy(s, a, td_errors[i])
+        actor.update_eligibility(s, a)
 
     action = new_action
     state = new_state
 
-    epsilon = max(0, epsilon_greedy_value-(episode/(num_of_episodes*0.5))) # Reduces the epsilon, but never below 0
+    #epsilon = max(0, epsilon_greedy_value-(episode/(num_of_episodes*0.5))) # Reduces the epsilon, but never below 0
+    # if episode+1 == num_of_episodes - 100:
+    #   epsilon = 0
+    # else:
+    epsilon = epsilon * epsilon_decay_rate
 
   print("Episode:", episode + 1)
   print("New delta:", critic.delta)
 
+  if (env.get_remaining_pegs() == 1):
+    print("Solved!")
+
   remaining_pegs.append(env.get_remaining_pegs())
+  epsilons.append(epsilon)
 
   if episode == num_of_episodes-1: # Visualize the last episode
     env.show()
 
-plot_remaining_pegs(remaining_pegs)
+plot_remaining_pegs(remaining_pegs, epsilons)
 
 if critic_type == "neural_net":
   critic.value_func.summary()
