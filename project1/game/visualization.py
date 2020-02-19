@@ -68,7 +68,6 @@ class Visualizer():
       graph = self.game_graphs[i]
       self.draw_graph(graph)
 
-    # Init only required for blitting to give a clean slate.
     def init():
       plt.subplot(111)
       self.draw_graph(self.game_graphs[0])
