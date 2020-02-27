@@ -1,4 +1,4 @@
 # Parameters for the main procedure
 
 # Number of episodes
-num_of_episodes = 1000
+num_of_episodes = 750
