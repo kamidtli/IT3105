@@ -20,7 +20,6 @@ class SplitGD():
     self.td_errors = []
     self.eligibilities = []
 
-  # Subclass this with something useful.
   def modify_gradients(self,gradients):
     # Create the eligibilities with the same shape as the gradients
     if len(self.eligibilities) == 0:
@@ -29,6 +28,7 @@ class SplitGD():
         if len(grad.shape) > 1:
           self.eligibilities.append(tf.zeros(grad.shape))
 
+    # Update the eligibilities with the gradient
     for index, grad in enumerate(gradients):
       if len(grad.shape) > 1:
         self.eligibilities[int(index/2)] += grad
