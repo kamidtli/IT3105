@@ -32,7 +32,7 @@ class TestNim(unittest.TestCase):
       B = [0, 0, 0, 1, 0, 2, 0, 0, 1, 0]
       P = 1
       game = Ledge(B, P)
-      game.move(5, 2) # Should thor AssertionError
+      game.move(5, 2) # Should throw AssertionError
     except AssertionError:
       # Exception caught, passed test
       self.assertTrue(True)

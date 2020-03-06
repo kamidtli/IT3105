@@ -146,7 +146,6 @@ class Ledge():
     
     return legal_moves
 
-
   def is_terminal_state(self):
     """
     Return True if the game is over, False if not.
