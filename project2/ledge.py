@@ -23,7 +23,7 @@ class Ledge():
     if verbose:
       print("Start board: {}".format(np.asarray(self.initial_state)).rjust(35+len(self.state)*2, " "))
 
-  def move(self, from_index, to_index):
+  def move(self, move):
     """
     Decides if the desired move is to pick up coin at ledge
     or to move a coin. Calls the corresponding method.
@@ -31,6 +31,7 @@ class Ledge():
     param to_index: Passed to move_coin
     """
     assert(not self.game_over) # Check if game is over
+    from_index, to_index = move
     if from_index == -1 or to_index == -1:
       # Want to pick up coin at ledge
       self.pickup_coin()
@@ -118,13 +119,25 @@ class Ledge():
     """
     Returns the current state of the game
     """
-    return self.state
+    return tuple(self.state)
 
   def get_active_player(self):
     """
     Returns the active player: 1 or 2
     """
     return self.active_player
+
+  def get_winner(self):
+    """
+    Checks if the game is over, and if so, returns 1 for player 1 winning
+    and -1 if player 2 wins.
+    """
+    if self.is_terminal_state() and self.get_active_player() == 1:
+      return 1
+    elif self.is_terminal_state() and self.get_active_player() == 2:
+      return -1
+    else:
+      print("Game is not over. get_winner will not return anything!")
 
   def get_legal_moves(self):
     """

@@ -1,10 +1,11 @@
 from nim import Nim
 from ledge import Ledge
 from mcts import MCTS
+from tree import Tree
 
 class GameSimulator():
 
-  def __init__(self, game, G=None, B=None, P=None, M=None, N=None, K=None, verbose=False):
+  def __init__(self, game, G=None, B=None, P=None, M=None, N=None, K=None, c=1, verbose=False):
     """
     Intiialize the game simulator by checking if all parameters have legal values.
     Will throw AssertionError if illegal arguments are passed in
@@ -29,7 +30,15 @@ class GameSimulator():
     self.B = B
     self.N = N
     self.K = K
+    self.c = c
     self.verbose = verbose
+
+  def create_game(self):
+    if self.type == "nim":
+      game = Nim(self.N, self.K, self.P, self.verbose)
+    else:
+      game = Ledge(self.B, self.P, self.verbose)
+    return game
 
   def run_batch(self):
     """
@@ -41,73 +50,26 @@ class GameSimulator():
     and a new game instance is made.
     Returns a list of round winners
     """
+    agent = MCTS(exploration_rate=self.c)
     win_stats = []
-    for i in range(self.G):
-      if self.type == "nim":
-        game = Nim(self.N, self.K, self.P, self.verbose)
-      else:
-        game = Ledge(self.B, self.P, self.verbose)
 
-      agent = MCTS()
+    game = self.create_game()
+    tree = Tree(game)
+
+    for i in range(self.G):
+      state = tree.root
 
       while (not game.is_terminal_state()):
-        move = agent.choose_move(game)
-        self.move(game, move)
+        best_child = agent.uct_search(tree, state, self.M)
+        game.move(best_child.move)
+        state = best_child
       
       win_stats.append(game.get_active_player())
+      game = self.create_game()
+      tree = Tree(game)
 
     self.summarize_batch(win_stats)
     return win_stats
-
-  def get_legal_moves(self):
-    """
-    Returns the a list of the legal moves for the
-    specified game, by calling get_legal_moves
-    """
-    return self.game.get_legal_moves()
-
-  def move(self, game, move):
-    """
-    Call the correct move method for either Nim or Ledge
-    param move: Either an int or a tuple. Int if the move
-    is for Nim, tuple of from_index and to_index if move is
-    for Ledge.
-    """
-    if isinstance(move, int):
-      if self.type == "nim":
-        self.move_nim(game, move)
-    elif isinstance(move, tuple):
-      if self.type == "ledge":
-        self.move_ledge(game, move[0], move[1])
-    else:
-      print("Illegal value {} for parameter 'move'".format(move))
-
-  def is_over(self):
-    """
-    Returns True if the current game state is terminal, False if not
-    """
-    return self.game.is_terminal_state()
-
-  def move_nim(self, game, amount):
-    """
-    Performs a move for the game Nim
-    param amount: The amount of stones to remove from the pile
-    """
-    if amount != None:
-      game.move(amount)
-    else:
-      print("You must specify a value for 'amount'")
-
-  def move_ledge(self, game, from_index, to_index):
-    """
-    Performs a move for the game Ledge
-    param from_index: The index to move coin from
-    param to_index: The index to move coin to
-    """
-    if from_index == None or to_index == None:
-      print("You must specify a value for 'from_index' and 'to_index'")
-    else:
-      game.move(from_index, to_index)
 
   def summarize_batch(self, batch_stats):
     player1_wins = batch_stats.count(1)

@@ -78,6 +78,18 @@ class Nim():
     """
     return self.active_player
 
+  def get_winner(self):
+    """
+    Checks if the game is over, and if so, returns 1 for player 1 winning
+    and -1 if player 2 wins.
+    """
+    if self.is_terminal_state() and self.get_active_player() == 1:
+      return 1
+    elif self.is_terminal_state() and self.get_active_player() == 2:
+      return -1
+    else:
+      print("Game is not over. get_winner will not return anything!")
+
   def get_max_removable(self):
     """
     Returns the maximum legal amount of stones to remove each round
