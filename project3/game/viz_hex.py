@@ -8,7 +8,7 @@ def print_board(state):
   width = size + 3*(size-1)
   rows = rotate(state)
   sep = n_sep
-  print(single_line*width + "\n")
+  print()
   for row in rows:
     row_str = ""
     for j in range(len(row)):
