@@ -11,4 +11,4 @@ class Cell():
       cell.addNeighbor(oppositeDirection, self)
   
   def __repr__(self):
-    return str(self.value)
+    return str(self.pos)

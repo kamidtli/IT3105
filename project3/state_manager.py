@@ -19,5 +19,8 @@ class StateManager():
   def move(self, move):
     self.game.move(move)
   
+  def is_game_over(self):
+    return self.game.is_game_over()
+
   def print_board(self):
     print_board(self.get_state())
