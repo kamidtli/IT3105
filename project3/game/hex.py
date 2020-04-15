@@ -31,7 +31,7 @@ class Hex():
 
   def is_game_over(self):
     if len(self.get_legal_moves()) == 0 or self.connected_path():
-      print("Game over!\tWinner: {}".format(self.active_player))
+      # print("Game over!\tWinner: {}".format(self.active_player))
       return True
     return False
 
@@ -123,3 +123,13 @@ class Hex():
     flattened_state = [cell.value for row in self.board.state for cell in row]
     flattened_state.insert(0, self.active_player)
     return tuple(flattened_state)
+
+  def get_state(self):
+    return self.board.state
+
+  def get_winner(self):
+    if self.is_game_over():
+      return self.active_player
+
+  def get_active_player(self):
+    return self.active_player

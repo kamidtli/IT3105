@@ -7,8 +7,13 @@ class StateManager():
   def __init__(self):
     self.game = Hex(board_size)
   
+  def create_game(self):
+    game = Hex(board_size)
+    self.game = game
+    return game
+
   def get_nn_state(self):
-    return self.game.get_state()
+    return self.game.get_nn_state()
   
   def get_state(self):
     return self.game.board.state
