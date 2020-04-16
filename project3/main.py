@@ -1,5 +1,6 @@
 import random
 from config import *
+from anet import ANET
 from state_manager import StateManager
 from mcts import MCTS
 from tree import Tree
@@ -9,7 +10,8 @@ def progress_bar(current_game):
   print("Games: {}/{} {}%".format(current_game, num_of_games, percentage), end='\r')
 
 """ Initializations """
-agent = MCTS(exploration_rate=1)
+anet = ANET(board_size**2 + 1, board_size**2)
+agent = MCTS(exploration_rate=1, anet=anet)
 sm = StateManager()
 game = sm.create_game()
 tree = Tree(game)

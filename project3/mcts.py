@@ -5,8 +5,9 @@ import numpy as np
 
 class MCTS():
 
-  def __init__(self, exploration_rate):
+  def __init__(self, exploration_rate, anet):
     self.c = exploration_rate
+    self.anet = anet
 
   def uct_search(self, tree, node, M):
     """
@@ -67,8 +68,7 @@ class MCTS():
     final state.
     """
     def default_policy(board):
-      moves = board.get_legal_moves()
-      return random.choice(moves)
+      return self.anet.choose_move(board)
       
     game = deepcopy(board)
     game.verbose = False
