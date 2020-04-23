@@ -4,14 +4,15 @@ from tensorflow import keras
 import random
 from config import hidden_layer_sizes
 import numpy as np
+from utils import normalize
 
-seed_value = 0
+seed_value = 69
 
 """ Set all seed values to get reproducible results """
-os.environ['PYTHONHASHSEED']=str(seed_value)
-random.seed(seed_value)
-np.random.seed(seed_value)
-tf.random.set_seed(seed_value)
+# os.environ['PYTHONHASHSEED']=str(seed_value)
+# random.seed(seed_value)
+# np.random.seed(seed_value)
+# tf.random.set_seed(seed_value)
 
 class ANET():
 
@@ -53,7 +54,6 @@ class ANET():
     return board.get_legal_moves()[np.argmax(normalized)]
 
   def normalize_predictions(self, board, predictions):
-    # TODO: Get predictions only for legal moves
     state = board.get_nn_state()
     indices_to_remove = []
     for i in range(len(predictions)):
@@ -61,5 +61,14 @@ class ANET():
         indices_to_remove.append(i)
     
     legal_predictions = np.delete(predictions, indices_to_remove)
-    total = np.sum(legal_predictions)
-    return legal_predictions/total
+    return normalize(legal_predictions)
+
+  def split_cases(self, cases):
+    return zip(*cases)
+
+  def train(self, cases):
+    x_temp, y_temp = self.split_cases(cases)
+    x_train = np.asarray([node.state for node in x_temp])
+    y_train = np.asarray(y_temp)
+    self.model.fit(x_train, y_train)
+    return x_train, y_train

@@ -2,6 +2,7 @@ import random
 import math
 from copy import deepcopy
 import numpy as np
+from utils import normalize, Timer, softmax
 
 class MCTS():
 
@@ -18,8 +19,26 @@ class MCTS():
     for i in range(M):
       self.simulate(tree, node)
 
+    D = self.get_node_arc_visits(node)
+    training_case = (node, D)
     node.board = board
-    return self.select_best_child(node, 0)
+
+    best_move = (np.argmax(D)//node.board.board.size, np.argmax(D)%node.board.board.size)
+    for child in node.children:
+      if child.move == best_move:
+        return (child, training_case)
+    print("Should not be here!! uct_search in mcts.py")
+    # TODO: Check if should use select_best_child or just the most visited child
+    return (self.select_best_child(node, 0), training_case)
+
+  def get_node_arc_visits(self, node):
+    board_size = node.board.board.size
+    distributions = [0]*board_size**2
+    for i, child in enumerate(node.children):
+      row, col = child.move
+      distributions[row * board_size + col] = child.visits
+    D = normalize(distributions)
+    return tuple(D)
 
   def simulate(self, tree, node):
     """
@@ -70,10 +89,17 @@ class MCTS():
     def default_policy(board):
       return self.anet.choose_move(board)
       
+    def random_policy(board):
+      moves = board.get_legal_moves()
+      return random.choice(moves)
+
     game = deepcopy(board)
     game.verbose = False
     while (not game.is_game_over()):
-      a = default_policy(game)
+      if (random.uniform(0, 1) > 2):
+        a = default_policy(game)
+      else:
+        a = random_policy(game)
       game.move(a)
     return game.get_winner()
 

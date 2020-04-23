@@ -129,7 +129,7 @@ class Hex():
 
   def get_winner(self):
     if self.is_game_over():
-      return self.active_player
+      return 1 if self.active_player == 1 else -1
 
   def get_active_player(self):
     return self.active_player

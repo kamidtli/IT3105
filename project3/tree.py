@@ -6,7 +6,7 @@ class Node():
     """
     A class representing a node in the MCTS tree.
     """
-    self.state = board.get_state()
+    self.state = board.get_nn_state()
     self.parent = parent
     self.board = board
     self.move = move
@@ -15,7 +15,7 @@ class Node():
     self.children = []
 
   def __repr__(self):
-    return str(self.board.get_state())
+    return str(self.board.get_nn_state())
 
   def print_info(self):
     print("Node:", self.state)
