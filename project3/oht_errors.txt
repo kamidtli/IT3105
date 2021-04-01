@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "BasicClientActor.py", line 142, in <module>
+    bsa.connect_to_server()
+  File "/home/kim/skule/aiprog/project3/BasicClientActorAbs.py", line 81, in connect_to_server
+    self.play_tournament()
+  File "/home/kim/skule/aiprog/project3/BasicClientActorAbs.py", line 200, in play_tournament
+    usr_move = str(self.handle_get_action(ast.literal_eval(state)))
+  File "/usr/lib/python3.6/ast.py", line 48, in literal_eval
+    node_or_string = parse(node_or_string, mode='eval')
+  File "/usr/lib/python3.6/ast.py", line 35, in parse
+    return compile(source, filename, mode, PyCF_ONLY_AST)
+  File "<unknown>", line 1
+    The read operation timed out
+           ^
+SyntaxError: invalid syntax
